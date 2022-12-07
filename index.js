@@ -25,11 +25,26 @@ function run() {
 }
 run();
 
+const UsersCollection = client.db('DevPost').collection('users');
+
 app.get('/', (req, res) => {
     res.send('dev portal server is running fine');
 })
 
-
+app.post('/users', async (req, res) => {
+    try {
+        const user = req.body;
+        const filter = { email: user.email }
+        const exist = await UsersCollection.findOne(filter);
+        if (exist) {
+            return res.send({ message: "User already exist" });
+        }
+        const result = await UsersCollection.insertOne(user);
+        res.send(result)
+    } catch (error) {
+        console.log(error)
+    }
+})
 
 
 
